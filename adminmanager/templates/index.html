@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+		<meta charset="UTF-8">
+		<title>Admin Password Center</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+
+		<link rel="stylesheet" href="static/styles/style.css" media="screen" />
+		<link rel="stylesheet" href="static/styles/media-queries.css" />
+		<link href="static/styles/prettyPhoto.css" rel="stylesheet" type="text/css" media="screen" />
+		<link href="static/styles/tipsy.css" rel="stylesheet" type="text/css" media="screen" />
+
+		<script type="text/javascript" src="static/scripts/jquery-1.7.1.min.js"></script>
+		<script src="static/scripts/jquery.prettyPhoto.js" type="text/javascript"></script>
+		<script src="static/scripts/jquery.tipsy.js" type="text/javascript"></script>
+		<script src="static/scripts/jquery.knob.js" type="text/javascript"></script>
+		<script type="text/javascript" src="static/scripts/jquery.isotope.min.js"></script>
+		<script type="text/javascript" src="static/scripts/jquery.smooth-scroll.min.js"></script>
+		<script type="text/javascript" src="static/scripts/waypoints.min.js"></script>
+		<script type="text/javascript" src="static/scripts/setup.js"></script>
+		
+		<script type="text/javascript" src="/static/scripts/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="/static/scripts/myscripts.js"></script>
+</head>
+<body>
+<div id="wrap"> 
+  <div id="sidebar"> 
+    <!-- the  sidebar --> 
+    <!-- logo --> 
+    <a href="#" id="logo"> <img src="static/images/logo.png" alt="" /></a> 
+    <!-- navigation menu -->
+    <ul id="navigation">
+	  <li><a href="#industries">Добро пожаловать!</a></li>
+      <li><a href="#home" class="active">Домашняя</a></li>
+      <li><a href="#about">Еще..</a></li>
+      <li><a href="#portfolio">Документация</a></li>
+    </ul>
+  </div>
+  <div id="container"> 
+    <div class="page" id="home"> 
+      <div class="page_content">
+	  <div class="page" id="industries"> 
+      <h3 class="page_title">Admin Password Center</h3>
+      <div class="page_content">
+        <p>Централизованная система хранения паролей.</p>
+		<p> - Высокая безопасность. Поддержка Advanced Encryption Standard (AES256, Rijndael); </p>
+		<p> - Экспорт списка паролей в зашифрованные файлы CSV; </p>
+		<p> - Хранение базы паролей частями; </p>
+		<p> - Генератор случайных паролей с возможностью его настройки; </p>
+      </div>
+    </div>
+        <!-- services -->
+        <div class="one_half first">
+          <div class="column_content">
+            <h4>Авторизация</h4>
+            <p>
+			{% block content %}
+
+			  {% if form.errors %}
+				<p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+			  {% endif %}
+
+			  <form action='/accounts/login/' method='post'>
+				<table width="78%">
+				<tr><td>
+				<label for="username">Логин:</label>
+				<input type="text" name="username" value="" id="username">
+				</td></tr>
+				<tr><td>
+				<label for="password">Пароль:</label>
+				<input type="password" name="password" value="" id="password">
+				</td></tr>
+				<tr><td>
+				<input type="submit" value="Войти" style=" width: 98%;" />
+				<input type="hidden" name="next" value="{{ next|escape }}" />
+				</td></tr>
+				</table>
+			  </form>
+			</p>
+          </div>
+        </div>
+        <div class="one_half last">
+          <div class="column_content">
+            <h4>Регистрация</h4>
+            <img src="static/images/responsive.png" class="left no_border" alt="" style="margin-top: 10px; margin-right: 10px" />
+            <br><p>
+			<form action="/registration/" method="post" name="register" id="register_form" >
+			<table width="78%">
+				<tr><td>
+				<label for="username">Логин:</label>
+				<input type="text" name="username" value="" id="username">
+				</td></tr>
+				<tr><td>
+				<label for="name">Имя:</label>
+				<input type="text" name="name" value="" id="name">
+				</td></tr>
+				<tr><td>
+				<label for="email">E-mail:</label>
+				<input type="text" name="email" value="" id="email">
+				</td></tr>
+				<tr><td>
+				<label for="password">Пароль:</label>
+				<input type="password" name="password" value="" id="password">
+				</td></tr>
+				<tr><td>
+				<label for="password2">Повтор пароля:</label>
+				<input type="password" name="password2" value="" id="password2" class="required">
+				</td></tr>
+				<tr><td>
+				<input type="submit" value="Регистрация" style=" width: 98%;" />
+				<input type="reset" name="reset" value="Очистить" style=" width: 98%;">
+				<input type="hidden" name="next" value="{{ next|escape }}" />
+				</td></tr>
+			</table>
+			</form>
+			</p>
+          </div>
+        </div>
+		{% endblock %}
+        <div class="space"> </div>
+
+        <div class="clear"> </div>
+      </div>
+    </div>
+    <div class="page" id="about"> 
+      <!-- page about -->
+      <h3 class="page_title"> Рекомендации </h3>
+      <div class="page_content">
+        <p>Другие работы можно посмотреть здесь: </p>
+        <p> https://github.com/g1pn0z</p>
+        <div class="clear"> </div>
+      </div>
+    </div>
+    <div class="page" id="portfolio"> 
+      <!-- page documentation -->
+      <h3 class="page_title">Документация</h3>
+      <div class="page_content">
+        <p>- Добавление базы данных</p>
+		<p>- Добавление записей</p>
+		<p>- Редактирование записей</p>
+		<p>- Удаление записей</p>
+		<p>- Генерация паролей</p>
+        <ul id="works_filter">
+          <li><a href="#" data-filter="*" class="selected">Всё</a></li>
+          <li><a href="#" data-filter=".css">Генерация</a></li>
+          <li><a href="#" data-filter=".html_php">AES</a></li>
+          <li><a href="#" data-filter=".js">Запись в базу</a></li>
+        </ul>
+        <div class="clear"> </div>
+        <div id="works"> 
+          <!-- works --> 
+          <a rel="prettyPhoto[gallery]" href="static/images/photos/01.jpg">
+		  <img class="work js" src="static/images/photos/01.jpg" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/03.jpg">
+		  <img class="work css" src="static/images/photos/03.jpg" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/04.png">
+		  <img class="work html_php" src="static/images/photos/04.png" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/05.png">
+		  <img class="work html_php" src="static/images/photos/05.png" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/06.jpg">
+		  <img class="work css" src="static/images/photos/06.jpg" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/07.jpg">
+		  <img class="work js" src="static/images/photos/07.jpg" alt="" />
+		  </a><a rel="prettyPhoto[gallery]" href="static/images/photos/08.png">
+		  <img class="work html_php" src="static/images/photos/08.png" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/09.jpg">
+		  <img class="work js" src="static/images/photos/09.jpg" alt="" />
+		  </a>
+		  <a rel="prettyPhoto[gallery]" href="static/images/photos/10.png">
+		  <img class="work html_php" src="static/images/photos/10.png" alt="" />
+		  </a></div>
+        <div class="clear"> </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p> &copy; 2013, National Research University of Information Technologies, Mechanics and Optics </p>
+      <p> Khuzin Rinat, group 5517, Password Saver </p>
+    </div>
+  </div>
+</div>
+<a class="gotop" href="#top">Наверх</a>
+</body>
+</html>

@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Admin Password Center</title>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+
+		<link rel="stylesheet" href="/static/styles/bootstrap.css" media="screen" />
+		<link rel="stylesheet" href="/static/styles/style.css" media="screen" />
+		
+	</head>
+<body>
+	<h1 style="background-color:#619ec2;" >Модуль администрирования пользователя</h1>
+	<p id="logout"><a href="/accounts/logout/">Выход</a></p>
+
+<div class="row">
+	<div class="span12">
+    	<!-- Black Menu -->
+		<ul id="menu" class="black" align="center">
+			<li><a href="/account/loggedin/generator/">Генератор</a></li>
+			<li><a href="/account/loggedin/documentation/">Документация</a></li>
+			<li><a href="/account/loggedin/output/services/">Сайты и сервисы</a></li>
+			<li><a href="/account/loggedin/output/bank/">Банковские карты</a></li>
+			<li><a href="/account/loggedin/output/clients/">Клиенты</a></li>
+		</ul>
+		</div>
+	<div class="span16">
+	{% block content %}
+    <div class="row">
+      <div class="span3">
+	  	<ul>
+			<li><a href="/account/loggedin/base/">Разделитель базы</a></li>
+			<li class="active"><a href="/account/loggedin/base/collector/">Сборщик базы</a></li>
+			<li><a href="/account/loggedin/base/device_data/">Данные с флешки</a></li>
+		</ul>
+	  </div>
+      <div class="span8">
+	  {% if collector_session != None %}
+	  <h3>Сборка базы данных</h3>
+		<form action="/account/loggedin/base/collector/" method="post" enctype="multipart/form-data">
+			Файл:<br> <input type="file" name="part_file" ><br />
+			<input type="radio" name="flag_upload" value="true" hidden="true" checked />
+			<input type="submit" value="Загрузить базу">
+		</form>
+	  {% endif %}
+	  	  {% if x_message != None %}
+	  <p>Файл загружен успешно! База адаптирована.</p>
+		{{ x_message }}
+	  {% endif %}
+	  {% if password_gen != None or generated_pas != None %}
+	  	<h3>Сгенерировать пароль</h3>
+		<p align="left">Алгоритм: password = base64(hmac(secret, url))</p>
+		<p>Secret — ваш секретный ключ (любой набор букв, цифр, пробелов и других символов) — секретная информация.</p>
+		<p>URL — адрес сайта или любое другое слово (например, google.com или vasya@example.com) — публичная информация.</p>
+		<div>
+		<form action="/account/loggedin/generator/" method="post" name="generator">
+			<table align="center" width="60%">
+			<tr><td>Секретный ключ:</td></tr>
+				<tr><td><input type="text" name="secret" size="20" maxlength="128"></td></tr>
+				<tr><td>URL:</td></tr>
+				<tr><td><input type="text" name="gen_url" size="20" maxlength="128"></td></tr>
+				<tr><td>Максимальная длина:</td></tr>
+				<tr><td><input type="text" name="max_len" size="20" maxlength="12"></td></tr>
+				<tr><td><input type="submit" name="submit" value="Сгенерировать"></td></tr>
+				<tr><td><p style="background-color:#619ec2;" align="center">Скопировать: {{ generated_pas|escape }}</p></td></tr>
+			</table>
+		</form>
+		</div>
+	  {% endif %}
+	  {% if doc_in_session != None %}
+	  	<p>Советы при использовании данного софта</p>
+		Если ваш телефон имеет возможность выхода в интернет, и вы не ставили никаких программ
+		оставьте возможность выхода устройства в интернет. 
+		Храните ваши данные IMEI, IMSI
+		<p>Добавление записей</p>
+		<p>В левом меню заполните необходимые поля вашей учетной записи: Title, Login, Password, Статус пароля, URL. 
+		<p>О статусах паролей:</p>
+		<p>- Холодный - уведомление о смене пароля приходит через неделю</p>
+		<p>- Теплый - уведомление о смене пароля приходит через 2 недели</p>
+		<p>- Горячий - уведомление о смене пароля приходит через месяц</p>
+		<p>Далее нажмите [Добавить] - данные успешно добавлены либо вывод страницы ошибки(Error in saving). 
+		При успешно выполненной операции вы сразу сможете увидеть изменения</p>
+		<div id="doc_image"><img src="/static/images/add.jpg" alt="add" /></div>
+		<p>Удаление записей</p>
+		<p>Удаление записи происходит во время просмотра базы паролей. Выбирая radio-button,</p>
+		<p>какие строки нужно удалить нажимаете кнопку [Удалить]. Будьте внимательны! В данной версии</p>
+		<p>продукта строки удаляются сразу после нажатия кнопки.</p>
+		<div id="doc_image"><img src="/static/images/del.jpg" alt="add" /></div>
+		<p>Редактирование записей</p>
+		<p>Редактирование записи происходит во время просмотра базы паролей.</p>
+		<p>Выбирая radio-button, какие строки нужно изменить или обновить, нажимаете кнопку [Ред.].</p>
+		<div id="doc_image"><img src="/static/images/edit.jpg" alt="add" /></div>
+		<p>У вас появляется возможность редактировать любое значение в данной строке. После редактирования нажмите [Обновить]</p>
+		<div id="doc_image"><img src="/static/images/edit0.jpg" alt="add" /></div>
+		<p>Генерация паролей</p>
+		<p>Генератор паролей расположен в правой части экрана. Генератор: используется публичный алгоритм,</p>
+		<p>использующий ваш секретный ключ(Secret) и адрес сайта(URL). Также можно указать длину пароля(Максимальная длина).</p>
+		<div id="doc_image"><img src="/static/images/gen.jpg" alt="add" /></div>
+		<p>Далее нажимаете [Сгенерировать] - пароль будет отображен ниже, можете его скопировать.</p>
+		<div id="doc_image"><img src="/static/images/gen0.jpg" alt="add" /></div>
+	  {% endif %}
+	  	<!--Edit row-->
+		{% if edit_this_row_service != None %}
+			<form action="/account/loggedin/output/services/" method="post" enctype="multipart/form-data">
+				<table>
+				<tr align="center">
+					<td><input type="text" name="title" size="20"
+				maxlength="50" value={{ edit_this_row_service.title }}></td></tr>
+					<td><input type="text" name="login_base" size="20"
+				maxlength="50" value={{ edit_this_row_service.login_base }}></td></tr>
+					<td><input type="text" name="pass" size="20"
+				maxlength="50" value={{ edit_this_row_service.password }}></td></tr>
+					<td><select name="type_pass">
+						<option value="cold" selected>Холодный</option>
+						<option value="warm">Теплый</option>
+						<option value="hot">Горячий</option>
+					</select></td></tr>
+					<td><input type="text" name="url" size="20"
+				maxlength="50" value={{ edit_this_row_service.url }}></td></tr>
+					<td colspan="2"><input type="radio" name="update_please" value={{ edit_this_row_service.id }} hidden="true" checked />
+					<input type="submit" name="updated" value="Обновить"></td></tr>
+				</table>
+			</form>
+		{% endif %}
+		{% if edit_this_row_bank != None %}
+			<form action="/account/loggedin/output/bank/" method="post" enctype="multipart/form-data">
+				<table>
+				<tr align="center">
+					<td><input type="text" name="bank_name" size="20"
+				maxlength="50" value={{ edit_this_row_bank.bank_name }}></td>
+					<td><input type="text" name="type_card" size="20"
+				maxlength="50" value={{ edit_this_row_bank.type_card }}></td>
+					<td><input type="text" name="pin_code" size="20"
+				maxlength="50" value={{ edit_this_row_bank.pin_code }}></td>
+					<td colspan="2"><input type="radio" name="update_please" value={{ edit_this_row_bank.id }} hidden="true" checked />
+					<input type="submit" name="updated" value="Обновить"></td>
+				</table>
+			</form>
+		{% endif %}
+		{% if clients_output != None %}
+			<h3>Клиенты</h3>
+			<p>Устройства</p>
+		{% endif %}
+		{% if directory_output != None %}
+		{% if data_session != None %}
+		  <h3>Данные с флешки</h3>
+			<form action="/account/loggedin/base/device_data/" method="post" enctype="multipart/form-data">
+				Список директорий:<br><input type="text" name="directory_list"><br />
+				<input type="radio" name="flag_list_upload" value="true" hidden="true" checked />
+				<input type="submit" value="Загрузить список директории">
+			</form>
+		{% endif %}
+		<table width="100%" style="background-color:#619ec2;">
+			<tr>
+				<td>Временный вывод</td>
+			</tr>
+			{% for s in directory_output %}
+			<tr>
+				<td>{{ s.directory_list|escape }}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+                <td colspan="1">
+				<div class="pagination">
+					<span class="step-links">
+						{% if directory_output.has_previous %}
+							<a href="?page={{ directory_output.previous_page_number }}">назад</a>
+						{% endif %}
+
+						<span class="current">
+							Страница {{ directory_output.number }} из {{ directory_output.paginator.num_pages }}.
+						</span>
+
+						{% if directory_output.has_next %}
+							<a href="?page={{ directory_output.next_page_number }}">вперед</a>
+						{% endif %}
+					</span>
+				</div>
+				</td>				
+			</tr>
+		</table>
+			<h2>Данные и удаленное управление</h2>
+			<h3>Местоположение</h3>
+			<h3>Сеть</h3>
+			<h3>Информация о сессии</h3>
+			<h3>Веб-камера</h3>
+			<h3>Тревога</h3>
+			<h3>Предупреждение/Вознаграждение</h3>
+			<h3>Блокировка/Удалить/Скачать данные</h3>
+			<h3>Приватность</h3>
+	  {% endif %}
+	  {% if service_output != None %}
+		<form action="/account/loggedin/edit/services/" method="post" name="editor">
+		<table width="100%" style="background-color:#619ec2;">
+		<tr><td>Название</td><td>Логин</td><td>Пароль</td><td>Тип Пароля</td><td>URL</td><td>Редактор</td><td>Удаление</td></tr>
+			{% for s in service_output %}
+			<tr>
+				<td>{{ s.title|escape }}</td>
+				<td>{{ s.login_base|escape }}</td>
+				<td>{{ s.password|escape }}</td>
+				<td>{{ s.pass_type|escape }}</td>
+				<td>{{ s.url|escape }}</td>
+				<td><input type="radio" name="editor_index" value="{{ s.id|escape }}"></td>
+				<td><input type="radio" name="del_index" value="{{ s.id|escape }}"></td>
+			</tr>
+			{% endfor %}
+			<tr>
+                <td colspan="5">
+				<div class="pagination">
+					<span class="step-links">
+						{% if service_output.has_previous %}
+							<a href="?page={{ service_output.previous_page_number }}">назад</a>
+						{% endif %}
+
+						<span class="current">
+							Страница {{ service_output.number }} из {{ service_output.paginator.num_pages }}.
+						</span>
+
+						{% if service_output.has_next %}
+							<a href="?page={{ service_output.next_page_number }}">вперед</a>
+						{% endif %}
+					</span>
+				</div>
+				</td>				
+				<td><input type="submit" name="submit" value="Ред."></td>
+				<td><input type="submit" name="submit" value="Удалить"></td>
+			</tr>
+		</table>
+		</form>
+		{% elif bank_output != None %}
+		<form action="/account/loggedin/edit/bank/" method="post" name="editor">
+		<table width="100%" style="background-color:#619ec2;">
+		<tr><td>Название банка</td><td>Тип карты</td><td>Пин код</td><td>Редактор</td><td>Удаление</td></tr>
+			{% for s in bank_output %}
+			<tr><td>{{ s.bank_name|escape }}</td>
+			<td>{{ s.type_card|escape }}</td>
+			<td>{{ s.pin_code|escape }}</td>
+			<td><input type="radio" name="editor_index" value="{{ s.id }}"></td>
+			<td><input type="radio" name="del_index" value="{{ s.id }}"></td></tr>
+			{% endfor %}
+			<tr>
+                <td colspan="4">
+				<div class="pagination">
+					<span class="step-links">
+						{% if bank_output.has_previous %}
+							<a href="?page={{ bank_output.previous_page_number }}">назад</a>
+						{% endif %}
+
+						<span class="current">
+							Страница {{ bank_output.number }} из {{ bank_output.paginator.num_pages }}.
+						</span>
+
+						{% if bank_output.has_next %}
+							<a href="?page={{ bank_output.next_page_number }}">вперед</a>
+						{% endif %}
+					</span>
+				</div>
+				</td>				
+				<td><input type="submit" name="submit" value="Ред."></td>
+				<td><input type="submit" name="submit" value="Удалить"></td>
+			</tr>
+		</table>
+		</form>
+	  {% endif %}
+	  {% if cutter_session != None %}
+	  <p>Вы открыли разделитель!</p>
+	  	<h3>Храните вашу базу частями или почему паранойя - это хорошо?</h3>
+		<p align="left">Для безопасности хранения рекомендуется функция хранения базы по частям</p>
+		<form action="/account/loggedin/base/download/" method="post" enctype="multipart/form-data" >
+			<input type="radio" name="flag_cutter" value="true" hidden="true" checked />
+			<input type="submit" value="Разделить базу/ Скачать db часть">
+		</form>
+	  {% endif %}
+	  {% if flag_download != None %}
+		<p>{{ flag_download }}</p>
+	  {% endif %}
+	  </div>
+	  <div class="span4">
+	 {% if service_output != None %}
+	 <h3>Добавление</h3>
+		<form name="add_services" method="POST" action="/account/loggedin/add/services/">
+			Название:<br><input type="text" name="title" size="20" maxlength="50">
+			<br>Логин:<br><input type="login" name="login1" size="20" maxlength="50">
+			<br>Пароль:<br><input type="password" name="pass1" size="20" maxlength="50">
+			<br><p>Статус пароля:</p>
+			<select name="type_pass">
+						<option value="cold" selected>Холодный</option>
+						<option value="warm">Теплый</option>
+						<option value="hot">Горячий</option>
+			</select><br>
+			URL:<br><input type="text" name="url"><br>
+			<input type="radio" name="add_services" value="true" hidden="true" checked />
+			<input type="reset" name="reset" value="Очистить" style="width: 97.3%;">
+			<input type="submit" name="submit" value="Добавить" style="width: 97.3%;">
+		</form> 
+	{% endif %}
+	{% if bank_output != None %}
+	 <h3>Добавление</h3>
+		<form name="add_banks" method="POST" action="/account/loggedin/add/bank/">
+			Название банка:<br><input type="text" name="bank_name" size="20" maxlength="50">
+			<br>Тип карты:<br><input type="text" name="type_card" size="20" maxlength="50">
+			<br>Пин код:<br><input type="text" name="pin_code" size="20" maxlength="50">
+			<input type="radio" name="add_bank" value="true" hidden="true" checked />
+			<input type="reset" name="reset" value="Очистить" style="width: 97.3%;">
+			<input type="submit" name="submit" value="Добавить" style="width: 97.3%;">
+		</form> 
+	{% endif %}
+	  </div>
+    </div>
+	{% endblock %}
+  </div>
+</div>
+
+</body>
+</html>
